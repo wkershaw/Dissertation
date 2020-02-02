@@ -12,7 +12,7 @@ void Snow::Update()
 		int toAdd = rand() % 5;
 		for (int i = 0; i < toAdd; i++) {
 			float x = (((rand() % 100)) / 5.0) - 10;
-			float z = (((rand() % 50) / 10.0) - 30);
+			float z = (((rand() % 100) / 5.0) - 50);
 			particles->push_back(Particle(x, 10, z));
 			renderer->AddRenderObject(particles->back().getObject());
 		}
@@ -20,11 +20,11 @@ void Snow::Update()
 	for (int i = 0; i < particles->size(); i++) {
 		if (particles->at(i).getPosition().y < -30) {
 			float x = (((rand() % 100)) / 5.0 - 10);
-			float z = (((rand() % 50) / 10.0) - 30);
+			float z = (((rand() % 100) / 5.0) - 50);
 			particles->at(i).MoveTo(x, 10, z);
 		}
 		else {
-			particles->at(i).DisplaceBy(-0.01f, -0.1f, 0);
+			particles->at(i).DisplaceBy(0, -0.1f, 0);
 		}
 
 	}

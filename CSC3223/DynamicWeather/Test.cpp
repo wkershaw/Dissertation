@@ -19,6 +19,7 @@ using namespace CSC3223;
 
 int main() {
 	Window*w = Window::CreateGameWindow("Dynamic Weather Test Window");
+	Matrix4 cam;
 	if (!w->HasInitialised()) {
 		return -1;
 	}
@@ -29,12 +30,52 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
+	
+
+	OGLMesh* cube = new OGLMesh();
+	cube->SetVertexPositions({ Vector3(-30,-30,-50),Vector3(30,-30,-50), Vector3(-30,-30,-100), Vector3(30,30,-100) });
+	cube->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
+	cube->SetVertexColours({Ve});
+	cube->UploadToGPU();
+	renderer->AddRenderObject(new RenderObject(cube,Matrix4::Translation(Vector3(0,0,-70))));
+
+
+
 	Snow* s = new Snow(renderer);
 
 	float time = 0;
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		time += w->GetTimer()->GetTimeDelta();
-		s->Update();
+		s->Update();	
+
+
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_W)) {
+			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0,0,1));
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_S)) {
+			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 0, -1));
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_D)) {
+			cam.SetPositionVector(cam.GetPositionVector() + Vector3(-1, 0, 0));
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_A)) {
+			cam.SetPositionVector(cam.GetPositionVector() + Vector3(1, 0, 0));
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SHIFT)) {
+			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 1, 0));
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SPACE)) {
+			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, -1, 0));
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_LEFT)) {
+			cam = Matrix4::Rotation(-1, Vector3(0, 1, 0)) * cam;
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_RIGHT)) {
+			cam = Matrix4::Rotation(1, Vector3(0, 1, 0)) * cam;
+		}
+
+		//cam =Matrix4::Rotation(Window::GetMouse()->GetRelativePosition().x, Vector3(0, 1, 0)) * Matrix4::Rotation(Window::GetMouse()->GetRelativePosition().y, Vector3(1, 0, 0)) * cam;
+		renderer->SetViewMatrix(cam);
 		renderer->Render();
 	}
 
