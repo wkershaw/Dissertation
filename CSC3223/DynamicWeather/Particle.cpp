@@ -1,22 +1,15 @@
 #include "Particle.h"
-#include "../../Common/Vector3.h";
-#include <OGLMesh.cpp>
-#include <OGLShader.cpp>
 
-Particle::Particle(float x, float y, float z)
+
+Particle::Particle(float x, float y, float z, OGLMesh* mesh, OGLShader* shader)
 {
 
 	this->x = x;
 	this->y = y;
 	this->z = z;
-
-	OGLMesh* snow = new OGLMesh();
-	snow->SetVertexPositions({ Vector3{x,y,z} });
-	snow->SetVertexColours({ Vector4(1,1,1,1) });
-	snow->SetPrimitiveType(GeometryPrimitive::Points);
-	snow->UploadToGPU();
-	object = new RenderObject(snow);
-	OGLShader* shader = new OGLShader("RasterisationVert.glsl", "RasterisationFrag.glsl", "particleShader.glsl");
+	this->mesh = mesh;
+	this->shader = shader;
+	object = new RenderObject(mesh, Matrix4::Translation(Vector3(x,y,z)));
 	object->SetShader(shader);
 
 }

@@ -4,6 +4,7 @@
 #include "Renderer.h";
 
 using namespace std;
+using namespace NCL::Rendering;
 class Snow
 {
 	public:
@@ -12,5 +13,7 @@ class Snow
 	private:
 		vector<Particle>* particles;
 		Renderer* renderer;
+		OGLShader* shader;
+		OGLMesh* mesh;
 };
 
