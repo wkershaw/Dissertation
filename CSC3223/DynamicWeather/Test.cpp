@@ -12,6 +12,7 @@
 
 #include "Renderer.h"
 #include "Particle.h"
+#include "Snow.h";
 
 using namespace NCL;
 using namespace CSC3223;
@@ -28,13 +29,12 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-	Particle* sp = new Particle(0, 0, -5);
-	renderer->AddRenderObject(sp->getObject());
+	Snow* s = new Snow(renderer);
 
 	float time = 0;
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		time += w->GetTimer()->GetTimeDelta();
-		sp->DisplaceBy(0,-0.1f,0);
+		s->Update();
 		renderer->Render();
 	}
 
