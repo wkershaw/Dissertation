@@ -138,15 +138,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Snow.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
-    <ClInclude Include="Snow.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
