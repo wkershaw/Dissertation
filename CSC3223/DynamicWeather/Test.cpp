@@ -27,19 +27,27 @@ int main() {
 	Renderer*	renderer = new Renderer(*w);
 	renderer->SetProjectionMatrix(Matrix4::Perspective(1, 1000, w->GetScreenAspect(), 45.0f));
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glClearColor(0,0,0,1);
 	glEnable(GL_DEPTH_TEST);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
 	
 
-	OGLMesh* cube = new OGLMesh();
-	cube->SetVertexPositions({ Vector3(-30,-30,-50),Vector3(30,-30,-50), Vector3(-30,-30,-100), Vector3(30,30,-100) });
-	cube->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
-	cube->SetVertexColours({Ve});
-	cube->UploadToGPU();
-	renderer->AddRenderObject(new RenderObject(cube,Matrix4::Translation(Vector3(0,0,-70))));
+	OGLMesh* floor = new OGLMesh();
+	floor->SetVertexPositions({ Vector3(-30,-30,-40),Vector3(30,-30,-40), Vector3(-30,-30,0), Vector3(30,-30,0) });
+	floor->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
+	Vector4 floorColour = Vector4(0.3, 0.3, 0.3, 1);
+	floor->SetVertexColours({floorColour,floorColour,floorColour,floorColour});
+	floor->UploadToGPU();
+	renderer->AddRenderObject(new RenderObject(floor,Matrix4::Translation(Vector3(0,0,-60))));
 
-
+	OGLMesh* sky = new OGLMesh();
+	sky->SetVertexPositions({ Vector3(-30,10,-40),Vector3(30,10,-40), Vector3(-30,10,0), Vector3(30,10,0) });
+	sky->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
+	Vector4 skyColour = Vector4(0.1f, 0.1f, 0.6f, 1);
+	sky->SetVertexColours({ skyColour,skyColour ,skyColour ,skyColour });
+	sky->UploadToGPU();
+	renderer->AddRenderObject(new RenderObject(sky, Matrix4::Translation(Vector3(0, 0, -60))));
 
 	Snow* s = new Snow(renderer);
 
@@ -73,6 +81,13 @@ int main() {
 		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_RIGHT)) {
 			cam = Matrix4::Rotation(1, Vector3(0, 1, 0)) * cam;
 		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_UP)) {
+			cam = Matrix4::Rotation(-1, Vector3(1, 0, 0)) * cam;
+		}
+		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_DOWN)) {
+			cam = Matrix4::Rotation(1, Vector3(1, 0, 0)) * cam;
+		}
+
 
 		//cam =Matrix4::Rotation(Window::GetMouse()->GetRelativePosition().x, Vector3(0, 1, 0)) * Matrix4::Rotation(Window::GetMouse()->GetRelativePosition().y, Vector3(1, 0, 0)) * cam;
 		renderer->SetViewMatrix(cam);
