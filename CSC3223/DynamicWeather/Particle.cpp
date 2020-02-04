@@ -1,43 +1,34 @@
 #include "Particle.h"
-
-
-Particle::Particle(float x, float y, float z, OGLMesh* mesh, OGLShader* shader)
+Particle::Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* shader, Renderer* renderer)
 {
-
-	this->x = x;
-	this->y = y;
-	this->z = z;
+	this->velocity = velocity;
+	this->position = position;
+	this->renderer = renderer;
 	this->mesh = mesh;
 	this->shader = shader;
-	object = new RenderObject(mesh, Matrix4::Translation(Vector3(x,y,z)));
+	object = new RenderObject(mesh, Matrix4::Translation(position));
 	object->SetShader(shader);
+	renderer->AddRenderObject(object);
 
 }
 
-void Particle::MoveTo(float x, float y, float z)
+void Particle::MoveTo(Vector3 newPosition)
 {
-	this->x = x;
-	this->y = y;
-	this->z = z;
-	Vector3 newPosition = Vector3(x, y, z);
+	position = newPosition;
 	object->SetTransform(Matrix4::Translation(newPosition));
 }
 
-void Particle::DisplaceBy(float dx, float dy, float dz)
+void Particle::DisplaceBy(Vector3 displacment)
 {
-	this->x += dx;
-	this->y += dy;
-	this->z += dz;
-	Vector3 newPosition = Vector3(x, y, z);
-	object->SetTransform(Matrix4::Translation(newPosition));
+	position += displacment;
+	object->SetTransform(Matrix4::Translation(position));
 }
 
-RenderObject* Particle::getObject()
-{
-	return object;
+void Particle::Update() {
+	DisplaceBy(velocity);
 }
 
 Vector3 Particle::getPosition()
 {
-	return Vector3(x,y,z);
+	return position;
 }

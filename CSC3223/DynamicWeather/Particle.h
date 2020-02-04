@@ -1,25 +1,27 @@
 #pragma once
 #include "RenderObject.h"
-#include "../../Common/Vector3.h";
+#include "../../Common/Vector3.h"
 #include "../../Plugins/OpenGLRendering/OGLMesh.h"
 #include "../../Plugins/OpenGLRendering/OGLShader.h"
-
-using namespace NCL::CSC3223;
+#include "Renderer.h"
+using namespace NCL;
 using namespace NCL::Rendering;
+using namespace NCL::CSC3223;
 class Particle
 {
 public:
-	Particle(float x, float y, float z, OGLMesh* mesh, OGLShader* shader);
-	void MoveTo(float x, float y, float z);
-	void DisplaceBy(float x, float y, float z);
-	RenderObject* getObject();
+	Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* shader, Renderer* renderer);
+	void MoveTo(Vector3 newPosition);
+	void DisplaceBy(Vector3 displacment);
+	void Update();
 	Vector3 getPosition();
+	
 private:
-	float x;
-	float y;
-	float z;
+	Vector3 position;
+	Vector3 velocity;
 	RenderObject* object;
 	OGLMesh* mesh;
 	OGLShader* shader;
+	Renderer* renderer;
 };
 

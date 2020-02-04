@@ -12,7 +12,7 @@
 
 #include "Renderer.h"
 #include "Particle.h"
-#include "Snow.h";
+#include "Snow.h"
 
 using namespace NCL;
 using namespace CSC3223;
@@ -31,23 +31,21 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-	
-
 	OGLMesh* floor = new OGLMesh();
-	floor->SetVertexPositions({ Vector3(-30,-30,-40),Vector3(30,-30,-40), Vector3(-30,-30,0), Vector3(30,-30,0) });
+	floor->SetVertexPositions({ Vector3(-10,0,-10),Vector3(10,0,-10), Vector3(-10,0,10), Vector3(10,0,10) });
 	floor->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
 	Vector4 floorColour = Vector4(0.3, 0.3, 0.3, 1);
 	floor->SetVertexColours({floorColour,floorColour,floorColour,floorColour});
 	floor->UploadToGPU();
-	renderer->AddRenderObject(new RenderObject(floor,Matrix4::Translation(Vector3(0,0,-60))));
+	renderer->AddRenderObject(new RenderObject(floor,Matrix4::Translation(Vector3(0,10,-20))));
 
 	OGLMesh* sky = new OGLMesh();
-	sky->SetVertexPositions({ Vector3(-30,10,-40),Vector3(30,10,-40), Vector3(-30,10,0), Vector3(30,10,0) });
+	sky->SetVertexPositions({ Vector3(-10,0,-10),Vector3(10,0,-10), Vector3(-10,0,10), Vector3(10,0,10) });
 	sky->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
 	Vector4 skyColour = Vector4(0.1f, 0.1f, 0.6f, 1);
 	sky->SetVertexColours({ skyColour,skyColour ,skyColour ,skyColour });
 	sky->UploadToGPU();
-	renderer->AddRenderObject(new RenderObject(sky, Matrix4::Translation(Vector3(0, 0, -60))));
+	renderer->AddRenderObject(new RenderObject(sky, Matrix4::Translation(Vector3(0, -10, -20))));
 
 	Snow* s = new Snow(renderer);
 
