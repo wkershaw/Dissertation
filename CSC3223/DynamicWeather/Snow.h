@@ -28,5 +28,6 @@ class Snow
 		int depth;
 		int height;
 		float resolution;
+		TextureBase* texture;
 };
 

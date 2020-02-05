@@ -10,7 +10,7 @@ using namespace NCL::CSC3223;
 class Particle
 {
 public:
-	Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* shader, Renderer* renderer);
+	Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* shader,TextureBase* texture, Renderer* renderer);
 	void MoveTo(Vector3 newPosition);
 	void DisplaceBy(Vector3 displacment);
 	void Update();

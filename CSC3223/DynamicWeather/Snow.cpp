@@ -13,12 +13,13 @@ Snow::Snow(Renderer* renderer)
 	particles = new vector<Particle>();
 	shader = new OGLShader("RasterisationVert.glsl", "RasterisationFrag.glsl", "particleShader.glsl");
 	
+	texture = OGLTexture::RGBATextureFromFilename("snowflake.png");
+
 	mesh = new OGLMesh();
 	mesh->SetVertexPositions({ Vector3{0,0,0} });
 	mesh->SetVertexColours({ Vector4(1,1,1,1) });
 	mesh->SetPrimitiveType(NCL::GeometryPrimitive::Points);
 	mesh->UploadToGPU();
-
 }
 
 void Snow::Update()
@@ -27,7 +28,7 @@ void Snow::Update()
 		Vector3 coords = generateRandomCoord();
 		coords.y = 10;
 		Vector3 velocity = generateRanomVelocity();
-		particles->push_back(Particle(coords,velocity,mesh,shader, renderer));
+		particles->push_back(Particle(coords,velocity,mesh,shader,texture, renderer));
 	}
 	for (int i = 0; i < particles->size(); i++) {
 		UpdateParticle(particles->at(i));
@@ -52,9 +53,10 @@ Vector3 Snow::generateRandomCoord() {
 
 Vector3 Snow::generateRanomVelocity()
 {
-	float x = (rand() % 100) / 2000.0f;
-	float y = (rand() % 100) / -1000.0f;
-	float z = (rand() % 100) / 2000.0f;
-	return Vector3(x, y, z);
+	float x = (rand() % 100) / 5000.0f - 0.01f;
+	float y = (rand() % 100) / 5000.0f - 0.01f;
+	float z = (rand() % 100) / 5000.0f - 0.01f;
+
+	return Vector3(x, y, z) + Vector3(0.01f,-0.05f,0);
 }
 

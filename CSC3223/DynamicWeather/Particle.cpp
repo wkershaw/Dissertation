@@ -1,5 +1,5 @@
 #include "Particle.h"
-Particle::Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* shader, Renderer* renderer)
+Particle::Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* shader, TextureBase* texture, Renderer* renderer)
 {
 	this->velocity = velocity;
 	this->position = position;
@@ -8,8 +8,9 @@ Particle::Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* 
 	this->shader = shader;
 	object = new RenderObject(mesh, Matrix4::Translation(position));
 	object->SetShader(shader);
+	object->SetBaseTexture(texture);
 	renderer->AddRenderObject(object);
-
+	
 }
 
 void Particle::MoveTo(Vector3 newPosition)
