@@ -9,7 +9,7 @@ using namespace NCL::CSC3223;
 class Snow
 {
 	public:
-		Snow(Renderer* renderer);
+		Snow(Renderer* renderer, Vector3 position, Vector3 size, int maxParticles, int rate);
 		void Update();
 
 
@@ -20,14 +20,14 @@ class Snow
 		Vector3 generateRanomVelocity();
 		vector<Particle>* particles;
 		Renderer* renderer;
-		OGLShader* shader;
+		OGLShader* snowflakeShader;
 		OGLMesh* mesh;
 		
 		Vector3 position;
-		int width;
-		int depth;
-		int height;
+		Vector3 size;
 		float resolution;
-		TextureBase* texture;
+		int maxParticles;
+		int rate;
+		TextureBase* snowflakeTexture;
 };
 
