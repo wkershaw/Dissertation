@@ -18,78 +18,82 @@
 using namespace NCL;
 using namespace CSC3223;
 
-int main() {
-	Window*w = Window::CreateGameWindow("Dynamic Weather Test Window");
-	Matrix4 cam;
-	if (!w->HasInitialised()) {
-		return -1;
+Matrix4 CameraMovment(Matrix4 cam) {
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_W)) {
+		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 0, 1));
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_S)) {
+		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 0, -1));
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_D)) {
+		cam.SetPositionVector(cam.GetPositionVector() + Vector3(-1, 0, 0));
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_A)) {
+		cam.SetPositionVector(cam.GetPositionVector() + Vector3(1, 0, 0));
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SHIFT)) {
+		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 1, 0));
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SPACE)) {
+		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, -1, 0));
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_LEFT)) {
+		cam = Matrix4::Rotation(-1, Vector3(0, 1, 0)) * cam;
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_RIGHT)) {
+		cam = Matrix4::Rotation(1, Vector3(0, 1, 0)) * cam;
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_UP)) {
+		cam = Matrix4::Rotation(-1, Vector3(1, 0, 0)) * cam;
+	}
+	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_DOWN)) {
+		cam = Matrix4::Rotation(1, Vector3(1, 0, 0)) * cam;
 	}
 
-	Renderer*	renderer = new Renderer(*w);
-	renderer->SetProjectionMatrix(Matrix4::Perspective(1, 1000, w->GetScreenAspect(), 45.0f));
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.1,0.1,0.1,1);
-	glEnable(GL_DEPTH_TEST);
-	glPatchParameteri(GL_PATCH_VERTICES, 3);
+	return cam;
+}
 
-
-	NCL::CSC3222::TextureManager* texMan = new NCL::CSC3222::TextureManager();
-
+void DrawPlane(Renderer* renderer, NCL::CSC3222::TextureManager* texMan) {
 	OGLMesh* floor = new OGLMesh();
 	floor->SetVertexPositions({ Vector3(-10,0,-10),Vector3(10,0,-10), Vector3(-10,0,10), Vector3(10,0,10) });
-	floor->SetVertexTextureCoords({Vector2(0,0),Vector2(1,0), Vector2(0,1), Vector2(1,1), });
+	floor->SetVertexTextureCoords({ Vector2(0,0),Vector2(1,0), Vector2(0,1), Vector2(1,1), });
 	floor->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
 	Vector4 floorColour = Vector4(1, 1, 1, 1);
-	floor->SetVertexColours({floorColour,floorColour,floorColour,floorColour});
+	floor->SetVertexColours({ floorColour,floorColour,floorColour,floorColour });
 	floor->UploadToGPU();
 	RenderObject* o = new RenderObject(floor, Matrix4::Translation(Vector3(0, -10, -20)));
 	//TextureBase* t = OGLTexture::RGBATextureFromFilename("hm.png");
 	TextureBase* t = texMan->GetTexture("snowflake.png");
 	o->SetBaseTexture(t);
 	renderer->AddRenderObject(o);
+}
 
+int main() {
+	Window*w = Window::CreateGameWindow("Dynamic Weather Test Window");
+	if (!w->HasInitialised()) {
+		return -1;
+	}
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glClearColor(0.1, 0.1, 0.1, 1);
+	glEnable(GL_DEPTH_TEST);
+	glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+	Renderer*	renderer = new Renderer(*w);
+	renderer->SetProjectionMatrix(Matrix4::Perspective(1, 1000, w->GetScreenAspect(), 45.0f));
+	NCL::CSC3222::TextureManager* texMan = new NCL::CSC3222::TextureManager();
+	float time = 0;
+	Matrix4 cam;
+
+	DrawPlane(renderer, texMan);
 	Snow* s = new Snow(renderer);
 
-	float time = 0;
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
 		time += w->GetTimer()->GetTimeDelta();
 		s->Update();	
 
-
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_W)) {
-			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0,0,1));
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_S)) {
-			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 0, -1));
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_D)) {
-			cam.SetPositionVector(cam.GetPositionVector() + Vector3(-1, 0, 0));
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_A)) {
-			cam.SetPositionVector(cam.GetPositionVector() + Vector3(1, 0, 0));
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SHIFT)) {
-			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 1, 0));
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SPACE)) {
-			cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, -1, 0));
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_LEFT)) {
-			cam = Matrix4::Rotation(-1, Vector3(0, 1, 0)) * cam;
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_RIGHT)) {
-			cam = Matrix4::Rotation(1, Vector3(0, 1, 0)) * cam;
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_UP)) {
-			cam = Matrix4::Rotation(-1, Vector3(1, 0, 0)) * cam;
-		}
-		if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_DOWN)) {
-			cam = Matrix4::Rotation(1, Vector3(1, 0, 0)) * cam;
-		}
-
-
-		//cam =Matrix4::Rotation(Window::GetMouse()->GetRelativePosition().x, Vector3(0, 1, 0)) * Matrix4::Rotation(Window::GetMouse()->GetRelativePosition().y, Vector3(1, 0, 0)) * cam;
+		cam = CameraMovment(cam);
 		renderer->SetViewMatrix(cam);
 		renderer->Render();
 	}
