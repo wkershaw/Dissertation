@@ -1,6 +1,6 @@
-#version 400 core
+#version 150 core
 
-uniform sampler2D 	mainTex;
+uniform sampler2D mainTex;
 
 in Vertex
 {
@@ -8,14 +8,18 @@ in Vertex
 	vec2 texCoord;
 } IN;
 
-out vec4 fragColor;
+out vec4 fragColour;
 
 void main(void)
 {	
+
 	if(textureSize(mainTex, 1).x < 1.0f) {
-		fragColor = IN.colour;
+		fragColour = IN.colour;
 	}
 	else {
-		fragColor = texture(mainTex, IN.texCoord) * IN.colour;
+		fragColour = texture(mainTex, IN.texCoord) * IN.colour;
+		if(fragColour.a == 0){
+			discard;
+		}
 	}
 }

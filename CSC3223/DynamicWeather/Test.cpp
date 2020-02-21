@@ -13,6 +13,7 @@
 #include "Renderer.h"
 #include "Particle.h"
 #include "Snow.h"
+#include "TextureManager.h"
 
 using namespace NCL;
 using namespace CSC3223;
@@ -26,26 +27,27 @@ int main() {
 
 	Renderer*	renderer = new Renderer(*w);
 	renderer->SetProjectionMatrix(Matrix4::Perspective(1, 1000, w->GetScreenAspect(), 45.0f));
+	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0,0,0,1);
+	glClearColor(0.1,0.1,0.1,1);
 	glEnable(GL_DEPTH_TEST);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
+
+	NCL::CSC3222::TextureManager* texMan = new NCL::CSC3222::TextureManager();
+
 	OGLMesh* floor = new OGLMesh();
 	floor->SetVertexPositions({ Vector3(-10,0,-10),Vector3(10,0,-10), Vector3(-10,0,10), Vector3(10,0,10) });
+	floor->SetVertexTextureCoords({Vector2(0,0),Vector2(1,0), Vector2(0,1), Vector2(1,1), });
 	floor->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
-	Vector4 floorColour = Vector4(0.3, 0.3, 0.3, 1);
+	Vector4 floorColour = Vector4(1, 1, 1, 1);
 	floor->SetVertexColours({floorColour,floorColour,floorColour,floorColour});
 	floor->UploadToGPU();
-	renderer->AddRenderObject(new RenderObject(floor,Matrix4::Translation(Vector3(0,10,-20))));
-
-	OGLMesh* sky = new OGLMesh();
-	sky->SetVertexPositions({ Vector3(-10,0,-10),Vector3(10,0,-10), Vector3(-10,0,10), Vector3(10,0,10) });
-	sky->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
-	Vector4 skyColour = Vector4(0.1f, 0.1f, 0.6f, 1);
-	sky->SetVertexColours({ skyColour,skyColour ,skyColour ,skyColour });
-	sky->UploadToGPU();
-	renderer->AddRenderObject(new RenderObject(sky, Matrix4::Translation(Vector3(0, -10, -20))));
+	RenderObject* o = new RenderObject(floor, Matrix4::Translation(Vector3(0, -10, -20)));
+	//TextureBase* t = OGLTexture::RGBATextureFromFilename("hm.png");
+	TextureBase* t = texMan->GetTexture("snowflake.png");
+	o->SetBaseTexture(t);
+	renderer->AddRenderObject(o);
 
 	Snow* s = new Snow(renderer);
 
