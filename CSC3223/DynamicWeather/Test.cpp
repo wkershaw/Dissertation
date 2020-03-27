@@ -53,19 +53,43 @@ Matrix4 CameraMovment(Matrix4 cam) {
 	return cam;
 }
 
-void DrawPlane(Renderer* renderer, NCL::CSC3222::TextureManager* texMan) {
+void DrawPlane(Renderer* renderer) {
 	OGLMesh* floor = new OGLMesh();
-	floor->SetVertexPositions({ Vector3(-10,0,-10),Vector3(10,0,-10), Vector3(-10,0,10), Vector3(10,0,10) });
+	floor->SetVertexPositions({ Vector3(-20,0,-10),Vector3(20,0,-10), Vector3(-20,0,10), Vector3(20,0,10) });
 	floor->SetVertexTextureCoords({ Vector2(0,0),Vector2(1,0), Vector2(0,1), Vector2(1,1), });
 	floor->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
-	Vector4 floorColour = Vector4(1, 1, 1, 1);
+	Vector4 floorColour = Vector4(0.3f, 0.3f, 0.3f, 1);
 	floor->SetVertexColours({ floorColour,floorColour,floorColour,floorColour });
 	floor->UploadToGPU();
 	RenderObject* o = new RenderObject(floor, Matrix4::Translation(Vector3(0, -10, -20)));
-	//TextureBase* t = OGLTexture::RGBATextureFromFilename("hm.png");
-	TextureBase* t = texMan->GetTexture("snowflake.png");
-	o->SetBaseTexture(t);
 	renderer->AddRenderObject(o);
+}
+
+
+vector<Particle*>* DrawCloud(Renderer* renderer, float x, float y, float z) {
+	OGLShader* shader = new OGLShader("RasterisationVert.glsl", "RasterisationFrag.glsl", "cloudShader.glsl");
+	TextureBase* texture = OGLTexture::RGBATextureFromFilename("snowflake.png");
+	vector<Particle*>* particles = new vector<Particle*>();
+
+	OGLMesh* cloudPoint = new OGLMesh();
+	cloudPoint->SetVertexPositions({ Vector3(0,0,0) });
+	cloudPoint->SetPrimitiveType(GeometryPrimitive::Points);
+	cloudPoint->SetVertexColours({ Vector4(1,1,1,1) });
+	cloudPoint->UploadToGPU();
+
+
+	for (int i = 0; i < 10; i++) {
+		Vector3 position = Vector3(
+			(rand() % 60) / 10.0f + x,
+			(rand() % 20) / 10.0f + y,
+			z+(i*0.1f)
+		);
+		Particle* p = new Particle(position,cloudPoint,shader,texture,renderer);
+		particles->push_back(p);
+	}
+
+
+	return particles;
 }
 
 int main() {
@@ -73,25 +97,34 @@ int main() {
 	if (!w->HasInitialised()) {
 		return -1;
 	}
+	Renderer* renderer = new Renderer(*w);
+	renderer->SetProjectionMatrix(Matrix4::Perspective(1, 1000, w->GetScreenAspect(), 45.0f));
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glClearColor(0.1, 0.1, 0.1, 1);
+	glClearColor(0.45, 0.55, 0.65, 1);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
-	Renderer*	renderer = new Renderer(*w);
-	renderer->SetProjectionMatrix(Matrix4::Perspective(1, 1000, w->GetScreenAspect(), 45.0f));
-	NCL::CSC3222::TextureManager* texMan = new NCL::CSC3222::TextureManager();
 	float time = 0;
 	Matrix4 cam;
 
-	DrawPlane(renderer, texMan);
+	DrawCloud(renderer, 5, 5, -20);
+	DrawCloud(renderer, -10, 5, -20);
+
+	//DrawPlane(renderer);
 	Snow* s = new Snow(renderer);
 
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
-		time += w->GetTimer()->GetTimeDelta();
+		
+		time = w->GetTimer()->GetTimeDelta();
+		renderer->Update(time);
 		s->Update();	
+
+		int pCount = s->getParticleCount() - (s->getParticleCount() % 10);
+
+		w->SetTitle("P count: " + std::to_string(pCount));
 
 		cam = CameraMovment(cam);
 		renderer->SetViewMatrix(cam);

@@ -1,5 +1,5 @@
 #include "Particle.h"
-Particle::Particle(Vector3 position,Vector3 velocity, OGLMesh* mesh, OGLShader* shader, TextureBase* texture, Renderer* renderer)
+Particle::Particle(Vector3 position, OGLMesh* mesh, OGLShader* shader, TextureBase* texture, Renderer* renderer, Vector3 velocity)
 {
 	this->velocity = velocity;
 	this->position = position;
@@ -27,6 +27,10 @@ void Particle::DisplaceBy(Vector3 displacment)
 
 void Particle::Update() {
 	DisplaceBy(velocity);
+}
+
+void Particle::SetVelocity(Vector3 newVelocity) {
+	velocity = newVelocity;
 }
 
 Vector3 Particle::getPosition()

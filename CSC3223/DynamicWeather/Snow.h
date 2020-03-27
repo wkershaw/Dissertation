@@ -11,7 +11,7 @@ class Snow
 	public:
 		Snow(Renderer* renderer);
 		void Update();
-
+		int getParticleCount() { return particles->size(); };
 
 	private:
 
