@@ -1,33 +1,31 @@
 #pragma once
 #include "Renderer.h"
 #include "Particle.h"
+#include "Weather.h"
 #include <vector>
 using namespace std;
 using namespace NCL;
-using namespace NCL::Rendering;
 using namespace NCL::CSC3223;
-class Snow
+
+
+class Snow : public Weather
 {
-	public:
-		Snow(Renderer* renderer);
-		void Update();
-		int getParticleCount() { return particles->size(); };
+public:
+	Snow(Vector3 position, Vector3 scale, Renderer* renderer);
+	void Update();
+	int getParticleCount() { return snowflakes->size(); };
 
-	private:
+private:
 
-		void UpdateParticle(Particle& p);
-		Vector3 generateRandomCoord();
-		Vector3 generateRanomVelocity();
-		vector<Particle>* particles;
-		Renderer* renderer;
-		OGLShader* shader;
-		OGLMesh* mesh;
-		
-		Vector3 position;
-		int width;
-		int depth;
-		int height;
-		float resolution;
-		TextureBase* texture;
+	void UpdateSnowflake(Particle& p);
+	Vector3 generateRandomCoord();
+	Vector3 generateRanomVelocity();
+	vector<Particle>* snowflakes;
+	OGLShader* shader;
+	OGLMesh* mesh;
+	float resolution = 100.0f;
+	TextureBase* texture;
 };
+
+
 

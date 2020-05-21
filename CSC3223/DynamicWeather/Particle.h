@@ -14,8 +14,11 @@ public:
 	void MoveTo(Vector3 newPosition);
 	void DisplaceBy(Vector3 displacment);
 	void Update();
-	Vector3 getPosition();
+	Vector3 GetPosition();
+	Vector3 GetVelocity();
 	void SetVelocity(Vector3 newVelocity);
+	float GetSize();
+	void SetSize(float newSize);
 	
 private:
 	Vector3 position;

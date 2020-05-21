@@ -35,6 +35,30 @@ namespace NCL {
 				viewMatrix = m;
 			}
 
+			void SetSnowSpeed(float snowSpeed) {
+				this->snowSpeed = snowSpeed;
+			};
+
+			float GetSnowSpeed() {
+				return snowSpeed;
+			};
+
+			void SetFogDensity(float fogDensity) {
+				this->fogDensity = fogDensity;
+			};
+
+			float GetFogDensity() {
+				return fogDensity;
+			};
+
+			void SetFogGradient(float fogGradient) {
+				this->fogGradient = fogGradient;
+			};
+
+			float GetFogGradient() {
+				return fogGradient;
+			};
+
 		protected:
 			void RenderNode(RenderObject* root);
 	
@@ -47,6 +71,12 @@ namespace NCL {
 			Matrix4		viewMatrix;
 
 			vector<RenderObject*> renderObjects;
+
+			GameTimer frameTimer;
+			float fogDensity = 0.03f;
+			float fogGradient = 1.5f;
+			float snowSpeed = 0.1f;
+
 		};
 	}
 }

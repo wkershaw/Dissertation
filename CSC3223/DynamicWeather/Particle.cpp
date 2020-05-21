@@ -33,7 +33,22 @@ void Particle::SetVelocity(Vector3 newVelocity) {
 	velocity = newVelocity;
 }
 
-Vector3 Particle::getPosition()
+float Particle::GetSize()
+{
+	return object->GetParticleSize();
+}
+
+void Particle::SetSize(float newSize)
+{
+	object->SetParticleSize(newSize);
+}
+
+Vector3 Particle::GetPosition()
 {
 	return position;
+}
+
+Vector3 Particle::GetVelocity()
+{
+	return velocity;
 }

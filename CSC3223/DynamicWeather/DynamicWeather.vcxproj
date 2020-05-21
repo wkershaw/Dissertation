@@ -138,19 +138,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cloud.cpp" />
+    <ClCompile Include="Draw.cpp" />
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Snow.cpp" />
     <ClCompile Include="Test.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="RenderObject.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Weather.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cloud.h" />
+    <ClInclude Include="Draw.h" />
     <ClInclude Include="Particle.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="RenderObject.h" />
     <ClInclude Include="Snow.h" />
-    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Weather.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

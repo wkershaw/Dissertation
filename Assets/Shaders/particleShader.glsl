@@ -8,15 +8,19 @@ layout(triangle_strip, max_vertices = 4) out;
 in Vertex {
 	vec4 colour;
 	vec2 texCoord;
+	float visibility;
 } IN[];
 
 out Vertex {
 	vec4 colour;
 	vec2 texCoord;
+	float visibility;
 } OUT;
 
 void main(){
+
 	for(int i=0;i<gl_in.length();++i){
+		OUT.visibility = IN[i].visibility;
 		OUT.colour = IN[i].colour;
 		gl_Position = gl_in[i].gl_Position;
 		gl_Position.x += particleSize;

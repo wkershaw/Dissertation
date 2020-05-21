@@ -45,11 +45,20 @@ namespace NCL {
 				return shader;
 			}
 
+			float GetParticleSize() const {
+				return particleSize;
+			}
+
+			void SetParticleSize(float newSize) {
+				particleSize = newSize;
+			}
+
 		protected:
 			MeshGeometry*	mesh;
 			TextureBase*	texture;
 			ShaderBase*		shader;
 			Matrix4			transform;
+			float			particleSize;
 		};
 	}
 }

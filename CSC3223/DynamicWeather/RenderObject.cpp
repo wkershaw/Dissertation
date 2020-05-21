@@ -10,6 +10,7 @@ RenderObject::RenderObject(MeshGeometry* inMesh, Matrix4 m)
 	transform	= m;
 	texture		= nullptr;
 	shader		= nullptr;
+	particleSize = 0.1f;
 }
 
 RenderObject::~RenderObject()

@@ -13,7 +13,13 @@
 #include "Renderer.h"
 #include "Particle.h"
 #include "Snow.h"
-#include "TextureManager.h"
+#include "Cloud.h"
+#include "draw.h"
+
+#include <iostream>
+#include <fstream>
+#include "windows.h"
+#include "psapi.h"
 
 using namespace NCL;
 using namespace CSC3223;
@@ -22,115 +28,103 @@ Matrix4 CameraMovment(Matrix4 cam) {
 	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_W)) {
 		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 0, 1));
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_S)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_S)) {
 		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 0, -1));
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_D)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_D)) {
 		cam.SetPositionVector(cam.GetPositionVector() + Vector3(-1, 0, 0));
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_A)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_A)) {
 		cam.SetPositionVector(cam.GetPositionVector() + Vector3(1, 0, 0));
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SHIFT)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SHIFT)) {
 		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 1, 0));
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SPACE)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_SPACE)) {
 		cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, -1, 0));
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_LEFT)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_LEFT)) {
 		cam = Matrix4::Rotation(-1, Vector3(0, 1, 0)) * cam;
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_RIGHT)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_RIGHT)) {
 		cam = Matrix4::Rotation(1, Vector3(0, 1, 0)) * cam;
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_UP)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_UP)) {
 		cam = Matrix4::Rotation(-1, Vector3(1, 0, 0)) * cam;
 	}
-	if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_DOWN)) {
+	else if (Window::GetKeyboard()->KeyDown(KeyboardKeys::KEYBOARD_DOWN)) {
 		cam = Matrix4::Rotation(1, Vector3(1, 0, 0)) * cam;
 	}
 
 	return cam;
 }
 
-void DrawPlane(Renderer* renderer) {
-	OGLMesh* floor = new OGLMesh();
-	floor->SetVertexPositions({ Vector3(-20,0,-10),Vector3(20,0,-10), Vector3(-20,0,10), Vector3(20,0,10) });
-	floor->SetVertexTextureCoords({ Vector2(0,0),Vector2(1,0), Vector2(0,1), Vector2(1,1), });
-	floor->SetPrimitiveType(GeometryPrimitive::TriangleStrip);
-	Vector4 floorColour = Vector4(0.3f, 0.3f, 0.3f, 1);
-	floor->SetVertexColours({ floorColour,floorColour,floorColour,floorColour });
-	floor->UploadToGPU();
-	RenderObject* o = new RenderObject(floor, Matrix4::Translation(Vector3(0, -10, -20)));
-	renderer->AddRenderObject(o);
-}
+void gatherResults(std::ofstream& file, int& frameCount, int& pCount, float& dt) {
 
-
-vector<Particle*>* DrawCloud(Renderer* renderer, float x, float y, float z) {
-	OGLShader* shader = new OGLShader("RasterisationVert.glsl", "RasterisationFrag.glsl", "cloudShader.glsl");
-	TextureBase* texture = OGLTexture::RGBATextureFromFilename("snowflake.png");
-	vector<Particle*>* particles = new vector<Particle*>();
-
-	OGLMesh* cloudPoint = new OGLMesh();
-	cloudPoint->SetVertexPositions({ Vector3(0,0,0) });
-	cloudPoint->SetPrimitiveType(GeometryPrimitive::Points);
-	cloudPoint->SetVertexColours({ Vector4(1,1,1,1) });
-	cloudPoint->UploadToGPU();
-
-
-	for (int i = 0; i < 10; i++) {
-		Vector3 position = Vector3(
-			(rand() % 60) / 10.0f + x,
-			(rand() % 20) / 10.0f + y,
-			z+(i*0.1f)
-		);
-		Particle* p = new Particle(position,cloudPoint,shader,texture,renderer);
-		particles->push_back(p);
-	}
-
-
-	return particles;
+	MEMORYSTATUSEX memInfo;
+	memInfo.dwLength = sizeof(MEMORYSTATUSEX);
+	GlobalMemoryStatusEx(&memInfo);
+	PROCESS_MEMORY_COUNTERS_EX pmc;
+	GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc));
+	SIZE_T physMemUsedByMe = pmc.WorkingSetSize;
+	SIZE_T virtMemUsedByMe = pmc.PrivateUsage;
+	file << frameCount << "," << pCount << "," << dt << "," << physMemUsedByMe << "," << virtMemUsedByMe << "\n";
 }
 
 int main() {
+	std::ofstream resultsFile;
+	resultsFile.open("results_p_limit_v2.csv");
+	resultsFile << "frame,particles,delta,physMem,virtMem\n";
+
 	Window*w = Window::CreateGameWindow("Dynamic Weather Test Window");
 	if (!w->HasInitialised()) {
 		return -1;
 	}
 	Renderer* renderer = new Renderer(*w);
 	renderer->SetProjectionMatrix(Matrix4::Perspective(1, 1000, w->GetScreenAspect(), 45.0f));
-
+	Draw drawer = Draw(renderer);
+	
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glClearColor(0.45, 0.55, 0.65, 1);
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
 	glPatchParameteri(GL_PATCH_VERTICES, 3);
 
 	float time = 0;
+	int frameCounter = 0;
+	int pCount = 0;
 	Matrix4 cam;
+	cam.SetPositionVector(cam.GetPositionVector() + Vector3(0, 0, -20));
 
-	DrawCloud(renderer, 5, 5, -20);
-	DrawCloud(renderer, -10, 5, -20);
+	RenderObject* cube = drawer.DrawCuboid(Vector3(-10,-9,-20),Vector3(1,1,1),Vector4(1,0.3,0.3,1));
+	RenderObject* plane = drawer.DrawPlane(Vector3(0,-10,-10),Vector2(30,30),Vector4(0.2,0.2,0.2,1));
+	Snow* s = new Snow(Vector3(0,0,-10),Vector3(30,20,30),renderer);
+	
+	Cloud* cloud = new Cloud(Vector3(-25, 10, -30), Vector3(5, 2, 2), renderer);
+	Cloud* cloud1 = new Cloud(Vector3(-14, 12, -35), Vector3(5, 2, 2), renderer);
+	Cloud* cloud2 = new Cloud(Vector3(-8, 15, -40), Vector3(5, 2, 2), renderer);
+	Cloud* cloud3 = new Cloud(Vector3(5, 8, -50), Vector3(5, 2, 2), renderer);
+	Cloud* cloud4 = new Cloud(Vector3(10, 11, -30), Vector3(5, 2, 2), renderer);
+	Cloud* cloud5 = new Cloud(Vector3(13, 9, -25), Vector3(5, 2, 2), renderer);
+	Cloud* cloud6 = new Cloud(Vector3(19, 5, -35), Vector3(5, 2, 2), renderer);
 
-	//DrawPlane(renderer);
-	Snow* s = new Snow(renderer);
-
+	
 	while (w->UpdateWindow() && !Window::GetKeyboard()->KeyDown(KEYBOARD_ESCAPE)) {
-		
 		time = w->GetTimer()->GetTimeDelta();
 		renderer->Update(time);
 		s->Update();	
 
-		int pCount = s->getParticleCount() - (s->getParticleCount() % 10);
+		frameCounter++;
+		//w->SetTitle("Frame: " + std::to_string(frameCounter));
+		//pCount = s->getParticleCount();
+		//gatherResults(resultsFile, frameCounter, pCount,time);
 
-		w->SetTitle("P count: " + std::to_string(pCount));
 
 		cam = CameraMovment(cam);
 		renderer->SetViewMatrix(cam);
 		renderer->Render();
 	}
-
+	resultsFile.close();
 	delete renderer;
 	Window::DestroyGameWindow();
 }

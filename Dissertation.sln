@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DynamicWeather", "CSC3223\DynamicWeather\DynamicWeather.vcxproj", "{F77FE082-CD2C-43EC-8E05-98F972F65453}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{7A22CD41-A2EE-49F0-8B06-E01B4526CA41}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSC3223", "CSC3223", "{76085B4A-0757-4A96-A852-F447417B11E7}"
@@ -14,8 +16,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FontBuilder", "FontBuilder\FontBuilder.vcxproj", "{F75A977F-2D2B-4D4A-A5E4-72905D38922A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Programs", "Programs", "{EBB755EB-3523-4820-A137-826DC4A89983}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DynamicWeather", "CSC3223\DynamicWeather\DynamicWeather.vcxproj", "{F77FE082-CD2C-43EC-8E05-98F972F65453}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
