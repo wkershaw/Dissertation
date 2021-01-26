@@ -1,0 +1,7 @@
+For my dissertation project during my third year of university, I decided to explore methods for rendering dynamic weather in real-time. I then attempted to implement some of these techniques myself using C++ and OpenGL.
+
+Undertaking this project greatly increased my understanding of OpenGL alongside real-time rendering as a whole. I also measured some performance metrics for my implemented system including framerates and memory usage. This allowed me to gain a small piece of insight into code optimization and how to build a system that renders in real-time.
+
+The project implements solutions for fog, clouds, and snow, including snow accumulation on the ground. The write up which was done as part of the dissertation project explores multiple techniques for each of these types of weather which I was unable to implement due to time constraints. In the future, I hope to further progress my understanding of these techniques including a volumetric rendering system used to render realistic looking clouds in real-time.
+
+This was one of the first ‘large’ projects that I have undertaken, and I learned a lot about software development along the way. It has furthered my appreciation of a comprehensive specification as well as detailed comments: it became quickly apparent that development on this project would become increasingly more difficult without these as the codebase grew. I was also able to plan and utilise my time more effectively, especially with some hard deadlines set by the University.
